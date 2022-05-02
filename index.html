@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Gos & pyscript</title>
+	<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+	<script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+<py-env>
+  - gosling
+</py-env>
+</head>
+<body>
+	<py-script>
+import gosling as gos
+
+data = gos.multivec(
+    url="https://server.gosling-lang.org/api/v1/tileset_info/?d=cistrome-multivec",
+    row="sample",
+    column="position",
+    value="peak",
+    categories=["sample 1", "sample 2", "sample 3", "sample 4"],
+    binSize=5,
+)
+
+base_track = gos.Track(data, width=800, height=100)
+
+heatmap = base_track.mark_rect().encode(
+    x=gos.X("start:G", axis="top"),
+    xe="end:G",
+    row=gos.Row("sample:N", legend=True),
+    color=gos.Color("peak:Q", legend=True),
+)
+
+bars = base_track.mark_bar().encode(
+    x=gos.X("position:G", axis="top"),
+    y="peak:Q",
+    row="sample:N",
+    color=gos.Color("sample:N", legend=True),
+)
+
+lines = base_track.mark_line().encode(
+    x=gos.X("position:G", axis="top"),
+    y="peak:Q",
+    row="sample:N",
+    color=gos.Color("sample:N", legend=True),
+)
+
+gos.vertical(heatmap, bars, lines).properties(
+    title="Visual Encoding",
+    subtitle="Gosling provides diverse visual encoding methods",
+    layout="linear",
+    centerRadius=0.8,
+    xDomain=gos.GenomicDomain(chromosome="1", interval=[1, 3000500]),
+)
+	</py-script>
+</body>
+</html>
